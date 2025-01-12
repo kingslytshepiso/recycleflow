@@ -10,7 +10,8 @@ import com.enviro.assessment.grad001.kingslymokgwathi.recycleflow.models.Waste;
 
 @Repository
 public interface WasteRespository extends JpaRepository<Waste, UUID> {
-    // Optional<Waste> findByName(String name);
+    Optional<Waste> findByName(String name);
 
     // void deleteByName(String name);
+    boolean existsByName(String name);
 }
