@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,6 +28,7 @@ public class Classification {
     @GeneratedValue
     private UUID id;
     @Column(unique = true, nullable = false)
+    @NotNull(message = "Name is required")
     private String name;
     private String description;
     private Set<String> importantNotes;

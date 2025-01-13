@@ -33,7 +33,7 @@ public class ClassificationControllerTests {
     private ObjectMapper mapper;
 
     private TestRestTemplate restTemplate = new TestRestTemplate();
-    private String baseUrl = "http://localhost:8080/classification";
+    private String baseUrl = "http://localhost:8080/classifications";
 
     @BeforeEach
     public void BeforeEach() {
@@ -58,8 +58,8 @@ public class ClassificationControllerTests {
     }
 
     @Test
-    @DisplayName("get all waste")
-    void getListOfWaste() throws Exception {
+    @DisplayName("get all classifications")
+    void getListOfClassifications() throws Exception {
         ResponseEntity<String> response = restTemplate.exchange(baseUrl, HttpMethod.GET, null, String.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();
@@ -77,5 +77,51 @@ public class ClassificationControllerTests {
         ResponseEntity<String> response = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getHeaders().getLocation()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("create new classification with null name")
+    void createClassificationWithNullName() throws Exception {
+        Classification newClass = new Classification(null, null, "d", null, null);
+        HttpEntity<Classification> request = new HttpEntity<>(newClass);
+        ResponseEntity<String> response = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    @DisplayName("get classification by id")
+    void getClassificationById() throws Exception {
+        Classification existingClassification = classificationService.getClassification(0, 10).getContent().get(0);
+        ResponseEntity<String> response = restTemplate.exchange(baseUrl + "/" + existingClassification.getId(),
+                HttpMethod.GET, null, String.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+
+        JsonNode json = mapper.readTree(response.getBody());
+
+        assertThat(json.get("id")).isNotNull();
+    }
+
+    @Test
+    @DisplayName("get classification by name")
+    void getClassificationByName() throws Exception {
+        Classification existingClassification = classificationService.getClassification(0, 10).getContent().get(0);
+        ResponseEntity<String> response = restTemplate.exchange(baseUrl + "/" + existingClassification.getName(),
+                HttpMethod.GET, null, String.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+
+        JsonNode json = mapper.readTree(response.getBody());
+
+        assertThat(json.get("name")).isNotNull();
+        assertThat(json.get("name").asText()).isEqualTo(existingClassification.getName());
+    }
+
+    @Test
+    @DisplayName("get classification by name or id that does not exist")
+    void getClassificationByNameOrIdThatDoesNotExist() throws Exception {
+        ResponseEntity<String> response = restTemplate.exchange(baseUrl + "/-1", HttpMethod.GET, null, String.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(response.getBody()).isNotNull();
     }
 }

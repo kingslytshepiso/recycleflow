@@ -191,4 +191,34 @@ public class WasteControllerTests {
         JsonNode json = mapper.readTree(response.getBody());
         assertThat(json.get("message").asText()).isNotNull();
     }
+
+    @Test
+    @DisplayName("search waste by name")
+    void searchWasteByName() throws Exception {
+        ResponseEntity<String> response = restTemplate.exchange(baseUrl + "/search?query=test waste 1", HttpMethod.GET,
+                null, String.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+
+        JsonNode json = mapper.readTree(response.getBody());
+        assertThat(json.get("content")).isNotNull();
+        assertThat(json.get("content").isArray()).isTrue();
+        assertThat(json.get("content").size()).isGreaterThan(0);
+    }
+
+    @Test
+    @DisplayName("search waste by name with no results")
+    void searchWasteByNameWithNoResults() throws Exception {
+        ResponseEntity<String> response = restTemplate.exchange(baseUrl + "/search?query=test waste 5555",
+                HttpMethod.GET,
+                null, String.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+
+        JsonNode json = mapper.readTree(response.getBody());
+        assertThat(json.get("content")).isNotNull();
+        assertThat(json.get("content").isArray()).isTrue();
+        assertThat(json.get("content").size()).isZero();
+    }
+
 }
