@@ -38,6 +38,11 @@ public class ClassificationService {
 
     }
 
+    public Page<Classification> searchClassification(String query, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return classificationRepository.findByNameContainingIgnoreCase(query, pageable);
+    }
+
     public Classification createClassification(Classification classification) {
         Boolean exists = classificationRepository.existsByName(classification.getName());
         if (exists) {

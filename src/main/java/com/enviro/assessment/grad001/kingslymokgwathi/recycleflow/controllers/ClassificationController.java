@@ -32,6 +32,17 @@ public class ClassificationController {
         return ResponseEntity.ok(classificationService.getClassification(page, size));
     }
 
+    @GetMapping("/{idOrName}")
+    public ResponseEntity<Classification> getClassificationById(@RequestParam String idOrName) {
+        return ResponseEntity.ok(classificationService.getClassificationByIdOrName(idOrName));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<Classification>> searchClassification(@RequestParam String query,
+            @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(classificationService.searchClassification(query, page, size));
+    }
+
     @PostMapping
     public ResponseEntity<Void> createClassification(@RequestBody Classification entity, UriComponentsBuilder ucb) {
         Classification saveClass = classificationService.createClassification(entity);

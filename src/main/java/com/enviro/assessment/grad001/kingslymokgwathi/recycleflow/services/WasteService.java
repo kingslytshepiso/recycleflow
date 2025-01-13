@@ -37,6 +37,11 @@ public class WasteService {
         }
     }
 
+    public Page<Waste> searchWaste(String query, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return wasteRespository.findByNameContainingIgnoreCase(query, pageable);
+    }
+
     public Waste createWaste(Waste waste) {
         Boolean exists = wasteRespository.existsByName(waste.getName());
         if (exists) {

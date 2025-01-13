@@ -2,10 +2,7 @@ package com.enviro.assessment.grad001.kingslymokgwathi.recycleflow.controllers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Set;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,7 +20,6 @@ import org.springframework.http.ResponseEntity;
 import com.enviro.assessment.grad001.kingslymokgwathi.recycleflow.models.Classification;
 import com.enviro.assessment.grad001.kingslymokgwathi.recycleflow.models.Waste;
 import com.enviro.assessment.grad001.kingslymokgwathi.recycleflow.services.ClassificationService;
-import com.enviro.assessment.grad001.kingslymokgwathi.recycleflow.services.WasteService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -32,9 +28,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class ClassificationControllerTests {
     @Autowired
     private ClassificationService classificationService;
-
-    @Autowired
-    private WasteService wasteService;
 
     @Autowired
     private ObjectMapper mapper;

@@ -43,6 +43,14 @@ public class WasteController {
         return ResponseEntity.ok(wasteService.getWasteByIdOrName(idOrName));
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<Page<Waste>> searchWaste(@RequestParam String query,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Page<Waste> waste = wasteService.searchWaste(query, page, size);
+        return ResponseEntity.ok(waste);
+    }
+
     @PostMapping
     public ResponseEntity<Void> createWaste(@Valid @RequestBody Waste entity, UriComponentsBuilder ucb) {
         Waste savedWaste = wasteService.createWaste(entity);
