@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,9 +34,11 @@ public class ClassificationController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<GetClassificationDto>> getClassifications(@RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(classificationService.getClassification(page, size));
+    public ResponseEntity<Page<GetClassificationDto>> getClassifications(@RequestParam(defaultValue = "0") int page, // Default
+                                                                                                                     // page
+            @RequestParam(defaultValue = "10") int size, // Default size
+            @RequestParam(defaultValue = "name,asc") String sort) {
+        return ResponseEntity.ok(classificationService.getClassification(page, size, sort));
     }
 
     @GetMapping("/{idOrName}")

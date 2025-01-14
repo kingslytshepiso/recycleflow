@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.enviro.assessment.grad001.kingslymokgwathi.recycleflow.dtos.GetClassificationDto;
@@ -23,8 +24,13 @@ public class ClassificationService {
         this.classificationRepository = classificationRepository;
     }
 
-    public Page<GetClassificationDto> getClassification(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public Page<GetClassificationDto> getClassification(int page, int size, String sort) {
+        String[] sortParams = sort.split(",");
+        Sort.Order order = Sort.Order.asc(sortParams[0]);
+        if ("desc".equalsIgnoreCase(sortParams[1])) {
+            order = Sort.Order.desc(sortParams[0]);
+        }
+        Pageable pageable = PageRequest.of(page, size, Sort.by(order));
         return classificationRepository.findAll(pageable).map(classification -> {
             return new GetClassificationDto(classification.getId(), classification.getName(),
                     classification.getDescription(),
