@@ -9,9 +9,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,7 +30,6 @@ public class Classification {
     private String name;
     private String description;
     private Set<String> importantNotes;
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "waste_classification", joinColumns = @JoinColumn(name = "classification_id"), inverseJoinColumns = @JoinColumn(name = "waste_id"))
-    Set<Waste> waste = new HashSet<Waste>();
+    @OneToMany(mappedBy = "classification", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Waste> waste = new HashSet<Waste>();
 }

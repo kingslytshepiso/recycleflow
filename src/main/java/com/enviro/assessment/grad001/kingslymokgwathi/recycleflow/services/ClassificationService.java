@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.enviro.assessment.grad001.kingslymokgwathi.recycleflow.dtos.GetClassificationDto;
 import com.enviro.assessment.grad001.kingslymokgwathi.recycleflow.exceptions.RecordNotFoundException;
 import com.enviro.assessment.grad001.kingslymokgwathi.recycleflow.models.Classification;
 import com.enviro.assessment.grad001.kingslymokgwathi.recycleflow.repositories.ClassificationRepository;
@@ -22,25 +23,39 @@ public class ClassificationService {
         this.classificationRepository = classificationRepository;
     }
 
-    public Page<Classification> getClassification(int page, int size) {
+    public Page<GetClassificationDto> getClassification(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return classificationRepository.findAll(pageable);
+        return classificationRepository.findAll(pageable).map(classification -> {
+            return new GetClassificationDto(classification.getId(), classification.getName(),
+                    classification.getDescription(),
+                    classification.getImportantNotes(), classification.getWaste());
+        });
     }
 
-    public Classification getClassificationByIdOrName(String idOrName) {
+    public GetClassificationDto getClassificationByIdOrName(String idOrName) {
         if (isUUID(idOrName)) {
-            return classificationRepository.findById(UUID.fromString(idOrName))
+            Classification classification = classificationRepository.findById(UUID.fromString(idOrName))
                     .orElseThrow(() -> new RecordNotFoundException("Classification not found with UUID: " + idOrName));
+            return new GetClassificationDto(classification.getId(), classification.getName(),
+                    classification.getDescription(),
+                    classification.getImportantNotes(), classification.getWaste());
         } else {
-            return classificationRepository.findByName(idOrName)
+            Classification classification = classificationRepository.findByName(idOrName)
                     .orElseThrow(() -> new RecordNotFoundException("Classification not found with Name: " + idOrName));
+            return new GetClassificationDto(classification.getId(), classification.getName(),
+                    classification.getDescription(),
+                    classification.getImportantNotes(), classification.getWaste());
         }
 
     }
 
-    public Page<Classification> searchClassification(String query, int page, int size) {
+    public Page<GetClassificationDto> searchClassification(String query, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return classificationRepository.findByNameContainingIgnoreCase(query, pageable);
+        return classificationRepository.findByNameContainingIgnoreCase(query, pageable).map(classification -> {
+            return new GetClassificationDto(classification.getId(), classification.getName(),
+                    classification.getDescription(),
+                    classification.getImportantNotes(), classification.getWaste());
+        });
     }
 
     public Classification createClassification(Classification classification) {
@@ -49,8 +64,30 @@ public class ClassificationService {
             throw new RecordNotFoundException(
                     "Classification with name " + classification.getName() + " already exists");
         }
+        if (classification.getWaste() != null) {
+            classification.getWaste().forEach(waste -> {
+                waste.setClassification(classification);
+            });
+        }
 
         return classificationRepository.save(classification);
+    }
+
+    public void updateClassification(UUID id, Classification classification) {
+        classificationRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException("Classification with id " + id + " not found"));
+        if (classification.getWaste() != null) {
+            classification.getWaste().forEach(waste -> {
+                waste.setClassification(classification);
+            });
+        }
+        classificationRepository.save(classification);
+    }
+
+    public void deleteClassificationById(UUID id) {
+        classificationRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException("Classification with id " + id + " not found"));
+        classificationRepository.deleteById(id);
     }
 
     public void deleteAllClassifications() {

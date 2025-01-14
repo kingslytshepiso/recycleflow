@@ -1,17 +1,15 @@
 package com.enviro.assessment.grad001.kingslymokgwathi.recycleflow.models;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,7 +31,8 @@ public class Waste {
     @NotNull(message = "Description is required")
     private String description;
     private String disposalMethod;
-    @ManyToMany(mappedBy = "waste", cascade = CascadeType.ALL)
+    @ManyToOne
+    @JoinColumn(name = "classification_id")
     @JsonIgnore
-    Set<Classification> classifications = new HashSet<Classification>();
+    private Classification classification;
 }
