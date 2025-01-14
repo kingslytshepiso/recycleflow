@@ -94,6 +94,16 @@ public class ClassificationControllerTests {
         }
 
         @Test
+        @DisplayName("create a classification that already exists")
+        void createClassificationThatAlreadyExists() throws Exception {
+                Classification newClass = new Classification(null, "test classification 1", "d", null, null);
+                HttpEntity<Classification> request = new HttpEntity<>(newClass);
+                ResponseEntity<String> response = restTemplate.exchange(baseUrl, HttpMethod.POST, request,
+                                String.class);
+                assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+        }
+
+        @Test
         @DisplayName("get classification by id")
         void getClassificationById() throws Exception {
                 GetClassificationDto existingClassification = classificationService.getClassification(0, 10, "name,asc")

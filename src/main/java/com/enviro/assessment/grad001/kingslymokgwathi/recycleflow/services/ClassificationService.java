@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.enviro.assessment.grad001.kingslymokgwathi.recycleflow.dtos.GetClassificationDto;
+import com.enviro.assessment.grad001.kingslymokgwathi.recycleflow.exceptions.DuplicateRecordException;
 import com.enviro.assessment.grad001.kingslymokgwathi.recycleflow.exceptions.RecordNotFoundException;
 import com.enviro.assessment.grad001.kingslymokgwathi.recycleflow.models.Classification;
 import com.enviro.assessment.grad001.kingslymokgwathi.recycleflow.repositories.ClassificationRepository;
@@ -67,7 +68,7 @@ public class ClassificationService {
     public Classification createClassification(Classification classification) {
         Boolean exists = classificationRepository.existsByName(classification.getName());
         if (exists) {
-            throw new RecordNotFoundException(
+            throw new DuplicateRecordException(
                     "Classification with name " + classification.getName() + " already exists");
         }
         if (classification.getWaste() != null) {
